@@ -50,13 +50,12 @@ $(() => {
                 data.forEach(place => {
                     const placeTag = $('<article></article>');
                     
-                    
                     // Creates content for place
                     const titleBox = $('<div class="title_box"></div>');
                     titleBox.append(`<h2>${place.name}</h2>`);
                     titleBox.append(`<div class="price_by_night">$${place.price_by_night}</div>`);
     
-                    const information = $('<div class="information"></div>');
+                    const information = $('<div class "information"></div>');
                     information.append(`<div class="max_guest">${place.max_guest} Guest${place.max_guest !== 1? 's' : ''}</div>`);
                     information.append(`<div class="number_rooms">${place.number_rooms} Bedroom${place.number_rooms !== 1 ? 's' : ''}</div>`);
                     information.append(`<div class="number_bathrooms">${place.number_bathrooms} Bathroom${place.number_bathrooms !== 1 ? 's' : ''}</div>`);
@@ -72,5 +71,46 @@ $(() => {
                 });
             }
         });
+    });
+
+    // Review show/hide functionality
+    let reviewsVisible = false;
+
+    // Functions to fetch and display reviews
+    const fetchReviews = () => {
+        $.ajax({
+            type: 'GET',
+            url: 'http://0.0.0.0:5001/api/v1/reviews/',
+            success: (data) => {
+                const reviewsList = $('.reviews');
+                reviewsList.empty();
+
+                data.forEach((review) => {
+                    const reviewElement = $('<p></p>');
+                    reviewElement.text(review.text);
+                    reviewsList.append(reviewElement);
+                });
+
+                reviewsVisible = true;
+            },
+        });
+    };
+
+    // Functions to hide reviews
+    const hideReviews = () => {
+        const reviewsList = $('.reviews');
+        reviewsList.empty();
+        reviewsVisible = false;
+    };
+
+    // Handles the click event on the "show" span
+    $('span.show-reviews').click(() => {
+        if (reviewsVisible) {
+            hideReviews();
+            $('span.show-reviews').text('show');
+        } else {
+            fetchReviews();
+            $('span.show-reviews').text('hide');
+        }
     });
 });
